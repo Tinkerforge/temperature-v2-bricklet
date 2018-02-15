@@ -528,7 +528,6 @@ $EndComp
 Wire Wire Line
 	3950 2350 4250 2350
 NoConn ~ 4250 2450
-NoConn ~ 4250 2650
 NoConn ~ 4250 2850
 NoConn ~ 4250 2950
 $Comp
@@ -546,4 +545,8 @@ Wire Wire Line
 	8900 4050 9000 4050
 Wire Wire Line
 	9000 4050 9000 4250
+Text GLabel 4050 2650 0    47   BiDi ~ 0
+ALERT
+Wire Wire Line
+	4250 2650 4050 2650
 $EndSCHEMATC
