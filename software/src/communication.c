@@ -25,6 +25,8 @@
 #include "bricklib2/protocols/tfp/tfp.h"
 #include "bricklib2/utility/callback_value.h"
 
+#include "sts3x.h"
+
 CallbackValue callback_value_temperature;
 
 
@@ -33,13 +35,29 @@ BootloaderHandleMessageResponse handle_message(const void *message, void *respon
 		case FID_GET_TEMPERATURE: return get_callback_value(message, response, &callback_value_temperature);
 		case FID_SET_TEMPERATURE_CALLBACK_CONFIGURATION: return set_callback_value_callback_configuration(message, &callback_value_temperature);
 		case FID_GET_TEMPERATURE_CALLBACK_CONFIGURATION: return get_callback_value_callback_configuration(message, response, &callback_value_temperature);
+		case FID_SET_HEATER_CONFIGURATION: return set_heater_configuration(message);
+		case FID_GET_HEATER_CONFIGURATION: return get_heater_configuration(message, response);
 		default: return HANDLE_MESSAGE_RESPONSE_NOT_SUPPORTED;
 	}
 }
 
 
+BootloaderHandleMessageResponse set_heater_configuration(const SetHeaterConfiguration *data) {
+	bool new_heater_value = data->heater_config == TEMPERATURE_V2_HEATER_CONFIG_ENABLED;
+	if(new_heater_value != sts3x.heater_on) {
+		sts3x.heater_on  = new_heater_value;
+		sts3x.new_heater = true;
+	}
 
+	return HANDLE_MESSAGE_RESPONSE_EMPTY;
+}
 
+BootloaderHandleMessageResponse get_heater_configuration(const GetHeaterConfiguration *data, GetHeaterConfiguration_Response *response) {
+	response->header.length = sizeof(GetHeaterConfiguration_Response);
+	response->heater_config = sts3x.heater_on ? TEMPERATURE_V2_HEATER_CONFIG_ENABLED : TEMPERATURE_V2_HEATER_CONFIG_DISABLED;
+
+	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
+}
 
 
 bool handle_temperature_callback(void) {
@@ -51,8 +69,7 @@ void communication_tick(void) {
 }
 
 void communication_init(void) {
-	// TODO: Add proper functions
-	callback_value_init(&callback_value_temperature, NULL);;
+	callback_value_init(&callback_value_temperature, sts3x_get_temperature);
 
 	communication_callback_init();
 }

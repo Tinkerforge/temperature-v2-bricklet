@@ -40,6 +40,9 @@ void communication_init(void);
 #define TEMPERATURE_V2_THRESHOLD_OPTION_SMALLER '<'
 #define TEMPERATURE_V2_THRESHOLD_OPTION_GREATER '>'
 
+#define TEMPERATURE_V2_HEATER_CONFIG_DISABLED 0
+#define TEMPERATURE_V2_HEATER_CONFIG_ENABLED 1
+
 #define TEMPERATURE_V2_BOOTLOADER_MODE_BOOTLOADER 0
 #define TEMPERATURE_V2_BOOTLOADER_MODE_FIRMWARE 1
 #define TEMPERATURE_V2_BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT 2
@@ -62,13 +65,29 @@ void communication_init(void);
 #define FID_GET_TEMPERATURE 1
 #define FID_SET_TEMPERATURE_CALLBACK_CONFIGURATION 2
 #define FID_GET_TEMPERATURE_CALLBACK_CONFIGURATION 3
+#define FID_SET_HEATER_CONFIGURATION 5
+#define FID_GET_HEATER_CONFIGURATION 6
 
 #define FID_CALLBACK_TEMPERATURE 4
 
+typedef struct {
+	TFPMessageHeader header;
+	uint8_t heater_config;
+} __attribute__((__packed__)) SetHeaterConfiguration;
+
+typedef struct {
+	TFPMessageHeader header;
+} __attribute__((__packed__)) GetHeaterConfiguration;
+
+typedef struct {
+	TFPMessageHeader header;
+	uint8_t heater_config;
+} __attribute__((__packed__)) GetHeaterConfiguration_Response;
 
 
 // Function prototypes
-
+BootloaderHandleMessageResponse set_heater_configuration(const SetHeaterConfiguration *data);
+BootloaderHandleMessageResponse get_heater_configuration(const GetHeaterConfiguration *data, GetHeaterConfiguration_Response *response);
 
 // Callbacks
 bool handle_temperature_callback(void);

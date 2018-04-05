@@ -1,7 +1,7 @@
 /* temperature-v2-bricklet
  * Copyright (C) 2018 Olaf Lüke <olaf@tinkerforge.com>
  *
- * main.c: Initialization for Temperature V2 Bricklet
+ * sts3x.h: Driver for STS3x temperature sensor
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,27 +19,39 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <stdio.h>
+#ifndef STS3X_H
+#define STS3X_H
+
+#include <stdint.h>
 #include <stdbool.h>
 
-#include "configs/config.h"
+#include "bricklib2/hal/i2c_fifo/i2c_fifo.h"
 
-#include "bricklib2/bootloader/bootloader.h"
-#include "bricklib2/hal/system_timer/system_timer.h"
-#include "bricklib2/logging/logging.h"
-#include "communication.h"
-#include "sts3x.h"
+typedef enum {
+    STS3X_STATE_IDLE,
+    STS3X_STATE_NEW_PERIODIC_MODE,
+    STS3X_STATE_NEW_HEATER,
+    STS3X_STATE_READ_DATA,
+} STS3XState;
 
-int main(void) {
-	logging_init();
-	logd("Start Temperature V2 Bricklet\n\r");
+typedef struct {
+    bool heater_on;
+    bool new_heater;
+    bool new_periodic_mode;
 
-	communication_init();
-	sts3x_init();
+    uint32_t last_read_time;
+    I2CFifo i2c_fifo;
+    
+    STS3XState state;
 
-	while(true) {
-		bootloader_tick();
-		communication_tick();
-		sts3x_tick();
-	}
-}
+    int16_t temperature;
+} STS3X;
+
+extern STS3X sts3x;
+
+void sts3x_init(void);
+void sts3x_tick(void);
+
+int16_t sts3x_get_temperature(void);
+
+#endif
