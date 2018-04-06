@@ -29,6 +29,7 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
+LIBS:temperature-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
@@ -46,13 +47,9 @@ $EndDescr
 Text Notes 550  7750 0    40   ~ 0
 Copyright Tinkerforge GmbH 2018.\nThis documentation describes Open Hardware and is licensed under the\nCERN OHL v. 1.1.\nYou may redistribute and modify this documentation under the terms of the\nCERN OHL v.1.1. (http://ohwr.org/cernohl). This documentation is distributed\nWITHOUT ANY EXPRESS OR IMPLIED WARRANTY, INCLUDING OF\nMERCHANTABILITY, SATISFACTORY QUALITY AND FITNESS FOR A\nPARTICULAR PURPOSE. Please see the CERN OHL v.1.1 for applicable\nconditions\n
 Wire Wire Line
-	7100 3100 7350 3100
-Wire Wire Line
 	6700 2800 7350 2800
 Wire Wire Line
 	6700 2900 7350 2900
-Text GLabel 7100 3100 0    47   Output ~ 0
-ALERT
 $Comp
 L GND #PWR01
 U 1 1 4CE2C195
@@ -506,10 +503,6 @@ $EndComp
 Wire Wire Line
 	3950 2350 4250 2350
 NoConn ~ 4250 2950
-Text GLabel 4050 2450 0    47   Input ~ 0
-ALERT
-Wire Wire Line
-	4250 2450 4050 2450
 $Comp
 L STS3x-DIS U2
 U 1 1 5AABD949
@@ -603,4 +596,6 @@ NoConn ~ 4250 2650
 Wire Wire Line
 	8100 3500 8100 3450
 Connection ~ 8000 3500
+NoConn ~ 4250 2450
+NoConn ~ 7350 3100
 $EndSCHEMATC
