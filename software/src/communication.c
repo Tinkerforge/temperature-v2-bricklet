@@ -27,20 +27,18 @@
 
 #include "sts3x.h"
 
-CallbackValue callback_value_temperature;
-
+CallbackValue_int16_t callback_value_temperature;
 
 BootloaderHandleMessageResponse handle_message(const void *message, void *response) {
 	switch(tfp_get_fid_from_message(message)) {
-		case FID_GET_TEMPERATURE: return get_callback_value(message, response, &callback_value_temperature);
-		case FID_SET_TEMPERATURE_CALLBACK_CONFIGURATION: return set_callback_value_callback_configuration(message, &callback_value_temperature);
-		case FID_GET_TEMPERATURE_CALLBACK_CONFIGURATION: return get_callback_value_callback_configuration(message, response, &callback_value_temperature);
+		case FID_GET_TEMPERATURE: return get_callback_value_int16_t(message, response, &callback_value_temperature);
+		case FID_SET_TEMPERATURE_CALLBACK_CONFIGURATION: return set_callback_value_callback_configuration_int16_t(message, &callback_value_temperature);
+		case FID_GET_TEMPERATURE_CALLBACK_CONFIGURATION: return get_callback_value_callback_configuration_int16_t(message, response, &callback_value_temperature);
 		case FID_SET_HEATER_CONFIGURATION: return set_heater_configuration(message);
 		case FID_GET_HEATER_CONFIGURATION: return get_heater_configuration(message, response);
 		default: return HANDLE_MESSAGE_RESPONSE_NOT_SUPPORTED;
 	}
 }
-
 
 BootloaderHandleMessageResponse set_heater_configuration(const SetHeaterConfiguration *data) {
 	bool new_heater_value = data->heater_config == TEMPERATURE_V2_HEATER_CONFIG_ENABLED;
@@ -59,9 +57,8 @@ BootloaderHandleMessageResponse get_heater_configuration(const GetHeaterConfigur
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }
 
-
 bool handle_temperature_callback(void) {
-	return handle_callback_value_callback(&callback_value_temperature, FID_CALLBACK_TEMPERATURE);
+	return handle_callback_value_callback_int16_t(&callback_value_temperature, FID_CALLBACK_TEMPERATURE);
 }
 
 void communication_tick(void) {
@@ -69,7 +66,7 @@ void communication_tick(void) {
 }
 
 void communication_init(void) {
-	callback_value_init(&callback_value_temperature, sts3x_get_temperature);
+	callback_value_init_int16_t(&callback_value_temperature, sts3x_get_temperature);
 
 	communication_callback_init();
 }
