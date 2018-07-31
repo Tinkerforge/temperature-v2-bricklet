@@ -1,9 +1,9 @@
-(kicad_pcb (version 4) (host pcbnew 4.0.7-e2-6376~61~ubuntu18.04.1)
+(kicad_pcb (version 4) (host pcbnew 4.0.2+dfsg1-stable)
 
   (general
     (links 49)
     (no_connects 0)
-    (area 14.45415 89.770139 156.179861 195.440793)
+    (area 140.134499 90.434499 155.515501 115.815501)
     (thickness 1.6002)
     (drawings 12)
     (tracks 194)
@@ -6620,6 +6620,11 @@
       (net 1 GND))
     (pad 8 smd rect (at 1.25 -0.75) (size 0.65 0.25) (layers Vorderseite F.Paste F.Mask)
       (net 1 GND))
+    (model Housings_DFN_QFN/DFN-8-1EP_3x3mm_Pitch0.5mm.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (gr_text Status (at 147.825 91.525) (layer F.SilkS)
