@@ -23,9 +23,9 @@ if __name__ == "__main__":
     # Register temperature callback to function cb_temperature
     t.register_callback(t.CALLBACK_TEMPERATURE, cb_temperature)
 
-    # Configure threshold for temperature "greater than 3000 °C"
+    # Configure threshold for temperature "greater than 30 °C"
     # with a debounce period of 1s (1000ms)
-    t.set_temperature_callback_configuration(1000, False, ">", 3000*100, 0)
+    t.set_temperature_callback_configuration(1000, False, ">", 30*100, 0)
 
     raw_input("Press key to exit\n") # Use input() in Python 3
     ipcon.disconnect()

@@ -16,9 +16,9 @@ ipcon.connect(HOST, PORT,
 
 ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
     function (connectReason) {
-        // Configure threshold for temperature "greater than 3000 °C"
+        // Configure threshold for temperature "greater than 30 °C"
         // with a debounce period of 1s (1000ms)
-        t.setTemperatureCallbackConfiguration(1000, false, '>', 3000*100, 0);
+        t.setTemperatureCallbackConfiguration(1000, false, '>', 30*100, 0);
     }
 );
 

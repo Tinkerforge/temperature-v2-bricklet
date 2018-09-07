@@ -25,10 +25,10 @@ Notebook[{
    RowBox[{"AddEventHandler", "[", RowBox[{RowBox[{"t", "@", "TemperatureCallback"}], ",", "TemperatureCB"}], "]"}],
    RowBox[{"
 "}],
-   RowBox[{"(*", "Configure threshold for temperature ", "\"\<greater than 3000 \.b0C\>\"", "", "*)"}],
+   RowBox[{"(*", "Configure threshold for temperature ", "\"\<greater than 30 \.b0C\>\"", "", "*)"}],
    RowBox[{"(*", "with a debounce period of 1s (1000ms)", "*)"}],
    RowBox[{"option", "=", "Tinkerforge`BrickletTemperatureV2`THRESHOLDUOPTIONUGREATER"}],
-   RowBox[{"t", "@", RowBox[{"SetTemperatureCallbackConfiguration", "[", RowBox[{"1000", ",", "False", ",", "option", ",", RowBox[{"3000", "*", "100"}], ",", "0"}], "]"}]}],
+   RowBox[{"t", "@", RowBox[{"SetTemperatureCallbackConfiguration", "[", RowBox[{"1000", ",", "False", ",", "option", ",", RowBox[{"30", "*", "100"}], ",", "0"}], "]"}]}],
    RowBox[{"
 "}],
    RowBox[{"Input", "[", "\"\<Click OK to exit\>\"", "]"}],

@@ -22,9 +22,9 @@ t.register_callback(BrickletTemperatureV2::CALLBACK_TEMPERATURE) do |temperature
   puts 'It is too hot, we need air conditioning!'
 end
 
-# Configure threshold for temperature "greater than 3000 °C"
+# Configure threshold for temperature "greater than 30 °C"
 # with a debounce period of 1s (1000ms)
-t.set_temperature_callback_configuration 1000, false, '>', 3000*100, 0
+t.set_temperature_callback_configuration 1000, false, '>', 30*100, 0
 
 puts 'Press key to exit'
 $stdin.gets

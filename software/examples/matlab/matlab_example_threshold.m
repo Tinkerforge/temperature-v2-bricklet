@@ -15,9 +15,9 @@ function matlab_example_threshold()
     % Register temperature callback to function cb_temperature
     set(t, 'TemperatureCallback', @(h, e) cb_temperature(e));
 
-    % Configure threshold for temperature "greater than 3000 °C"
+    % Configure threshold for temperature "greater than 30 °C"
     % with a debounce period of 1s (1000ms)
-    t.setTemperatureCallbackConfiguration(1000, false, '>', 3000*100, 0);
+    t.setTemperatureCallbackConfiguration(1000, false, '>', 30*100, 0);
 
     input('Press key to exit\n', 's');
     ipcon.disconnect();

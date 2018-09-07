@@ -26,9 +26,9 @@ $ipcon->connect(HOST, PORT); // Connect to brickd
 // Register temperature callback to function cb_temperature
 $t->registerCallback(BrickletTemperatureV2::CALLBACK_TEMPERATURE, 'cb_temperature');
 
-// Configure threshold for temperature "greater than 3000 °C"
+// Configure threshold for temperature "greater than 30 °C"
 // with a debounce period of 1s (1000ms)
-$t->setTemperatureCallbackConfiguration(1000, FALSE, '>', 3000*100, 0);
+$t->setTemperatureCallbackConfiguration(1000, FALSE, '>', 30*100, 0);
 
 echo "Press ctrl+c to exit\n";
 $ipcon->dispatchCallbacks(-1); // Dispatch callbacks forever
