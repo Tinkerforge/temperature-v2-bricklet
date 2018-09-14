@@ -15,7 +15,7 @@ TemperatureCB[sender_,temperature_]:=
  Print["Temperature: "<>ToString[N[Quantity[temperature,"°C/100"]]]]
 AddEventHandler[t@TemperatureCallback,TemperatureCB]
 
-(*Set period for voltage callback to 1s (1000ms) without a threshold*)
+(*Set period for temperature callback to 1s (1000ms) without a threshold*)
 option=Tinkerforge`BrickletTemperatureV2`THRESHOLDUOPTIONUOFF
 t@SetTemperatureCallbackConfiguration[1000,False,option,0,0]
 

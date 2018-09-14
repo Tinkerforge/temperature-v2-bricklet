@@ -36,7 +36,7 @@ int main(void) {
 	                                 (void *)cb_temperature,
 	                                 NULL);
 
-	// Set period for voltage callback to 1s (1000ms) without a threshold
+	// Set period for temperature callback to 1s (1000ms) without a threshold
 	temperature_v2_set_temperature_callback_configuration(&t, 1000, false, 'x', 0, 0);
 
 	printf("Press key to exit\n");

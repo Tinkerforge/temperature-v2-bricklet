@@ -14,7 +14,7 @@ function octave_example_callback()
     % Register temperature callback to function cb_temperature
     t.addTemperatureCallback(@cb_temperature);
 
-    % Set period for voltage callback to 1s (1000ms) without a threshold
+    % Set period for temperature callback to 1s (1000ms) without a threshold
     t.setTemperatureCallbackConfiguration(1000, false, "x", 0, 0);
 
     input("Press key to exit\n", "s");

@@ -21,7 +21,7 @@ t.register_callback(BrickletTemperatureV2::CALLBACK_TEMPERATURE) do |temperature
   puts "Temperature: #{temperature/100.0} °C"
 end
 
-# Set period for voltage callback to 1s (1000ms) without a threshold
+# Set period for temperature callback to 1s (1000ms) without a threshold
 t.set_temperature_callback_configuration 1000, false, 'x', 0, 0
 
 puts 'Press key to exit'

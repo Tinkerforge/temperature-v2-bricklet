@@ -24,7 +24,7 @@ class Example
 		// Register temperature callback to function TemperatureCB
 		t.TemperatureCallback += TemperatureCB;
 
-		// Set period for voltage callback to 1s (1000ms) without a threshold
+		// Set period for temperature callback to 1s (1000ms) without a threshold
 		t.SetTemperatureCallbackConfiguration(1000, false, 'x', 0, 0);
 
 		Console.WriteLine("Press enter to exit");

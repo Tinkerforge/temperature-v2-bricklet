@@ -23,7 +23,7 @@ Notebook[{
    RowBox[{"AddEventHandler", "[", RowBox[{RowBox[{"t", "@", "TemperatureCallback"}], ",", "TemperatureCB"}], "]"}],
    RowBox[{"
 "}],
-   RowBox[{"(*", "Set period for voltage callback to 1s (1000ms) without a threshold", "*)"}],
+   RowBox[{"(*", "Set period for temperature callback to 1s (1000ms) without a threshold", "*)"}],
    RowBox[{"option", "=", "Tinkerforge`BrickletTemperatureV2`THRESHOLDUOPTIONUOFF"}],
    RowBox[{"t", "@", RowBox[{"SetTemperatureCallbackConfiguration", "[", RowBox[{"1000", ",", "False", ",", "option", ",", "0", ",", "0"}], "]"}]}],
    RowBox[{"

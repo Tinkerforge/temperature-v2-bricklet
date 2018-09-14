@@ -46,7 +46,7 @@ begin
   { Register temperature callback to procedure TemperatureCB }
   t.OnTemperature := {$ifdef FPC}@{$endif}TemperatureCB;
 
-  { Set period for voltage callback to 1s (1000ms) without a threshold }
+  { Set period for temperature callback to 1s (1000ms) without a threshold }
   t.SetTemperatureCallbackConfiguration(1000, false, 'x', 0, 0);
 
   WriteLn('Press key to exit');

@@ -16,7 +16,7 @@ ipcon.connect(HOST, PORT,
 
 ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
     function (connectReason) {
-        // Set period for voltage callback to 1s (1000ms) without a threshold
+        // Set period for temperature callback to 1s (1000ms) without a threshold
         t.setTemperatureCallbackConfiguration(1000, false, 'x', 0, 0);
     }
 );

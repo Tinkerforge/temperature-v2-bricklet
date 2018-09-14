@@ -22,7 +22,7 @@ if __name__ == "__main__":
     # Register temperature callback to function cb_temperature
     t.register_callback(t.CALLBACK_TEMPERATURE, cb_temperature)
 
-    # Set period for voltage callback to 1s (1000ms) without a threshold
+    # Set period for temperature callback to 1s (1000ms) without a threshold
     t.set_temperature_callback_configuration(1000, False, "x", 0, 0)
 
     raw_input("Press key to exit\n") # Use input() in Python 3

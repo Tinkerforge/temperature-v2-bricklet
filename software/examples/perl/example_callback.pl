@@ -25,7 +25,7 @@ $ipcon->connect(&HOST, &PORT); # Connect to brickd
 # Register temperature callback to subroutine cb_temperature
 $t->register_callback($t->CALLBACK_TEMPERATURE, 'cb_temperature');
 
-# Set period for voltage callback to 1s (1000ms) without a threshold
+# Set period for temperature callback to 1s (1000ms) without a threshold
 $t->set_temperature_callback_configuration(1000, 0, 'x', 0, 0);
 
 print "Press key to exit\n";

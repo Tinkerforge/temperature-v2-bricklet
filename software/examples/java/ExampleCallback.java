@@ -24,7 +24,7 @@ public class ExampleCallback {
 			}
 		});
 
-		// Set period for voltage callback to 1s (1000ms) without a threshold
+		// Set period for temperature callback to 1s (1000ms) without a threshold
 		t.setTemperatureCallbackConfiguration(1000, false, 'x', 0, 0);
 
 		System.out.println("Press key to exit"); System.in.read();
