@@ -1,0 +1,11 @@
+
+
+# Change XYZ to the UID of your Temperature Bricklet 2.0
+
+setup:
+	# Handle incoming temperature callbacks
+	subscribe to tinkerforge/callback/temperature_v2_bricklet/XYZ/temperature
+	publish '{"register": true}' to tinkerforge/register/temperature_v2_bricklet/XYZ/temperature # Register temperature callback
+	# Configure threshold for temperature "greater than 30 °C"
+	# with a debounce period of 1s (1000ms)
+	publish '{"period": 1000, "value_has_to_change": false, "option": "greater", "min_temperature": 3000, "max_temperature": 0}' to tinkerforge/request/temperature_v2_bricklet/XYZ/set_temperature_callback_configuration  

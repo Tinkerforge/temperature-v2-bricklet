@@ -1,0 +1,8 @@
+
+
+# Change XYZ to the UID of your Temperature Bricklet 2.0
+
+setup:
+	# Get current temperature
+	subscribe to tinkerforge/response/temperature_v2/XYZ/get_temperature
+	publish '' to tinkerforge/request/temperature_v2_bricklet/XYZ/get_temperature 
