@@ -27,5 +27,5 @@ if __name__ == "__main__":
     # with a debounce period of 1s (1000ms)
     t.set_temperature_callback_configuration(1000, False, ">", 30*100, 0)
 
-    raw_input("Press key to exit\n") # Use input() in Python 3
+    input("Press key to exit\n") # Use raw_input() in Python 2
     ipcon.disconnect()
