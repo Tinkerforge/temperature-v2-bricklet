@@ -25,11 +25,12 @@
 #include "bricklib2/hal/system_timer/system_timer.h"
 #include "bricklib2/logging/logging.h"
 #include "bricklib2/utility/crc8.h"
+#include "bricklib2/os/coop_task.h"
 
 STS3X sts3x;
+CoopTask sts3x_task;
 
-void sts3x_init(void) {
-	memset(&sts3x, 0, sizeof(STS3X));
+void sts3x_init_i2c(void) {
 
 	sts3x.i2c_fifo.baudrate         = STS3X_I2C_BAUDRATE;
 	sts3x.i2c_fifo.address          = STS3X_I2C_ADDRESS;
@@ -70,97 +71,73 @@ void sts3x_init(void) {
     system_timer_sleep_ms(2);
 
     sts3x.new_periodic_mode = true;
+}
 
-	sts3x.state = STS3X_STATE_IDLE; 
+void sts3x_task_tick(void) {
+	uint32_t error = 0;
+	while(true) {
+		if(sts3x.new_periodic_mode) {
+			// We use 4 SPS, since with 10 SPS there might be "self-heating" of the sensor (see datasheet Table 8)
+			uint8_t data[2] = {0x23, 0x34}; // 4 samples per second
+			error = i2c_fifo_coop_write_direct(&sts3x.i2c_fifo, 2, data, true);
+
+			if(error == 0) {
+				sts3x.new_periodic_mode = false;
+			}
+		} else if(sts3x.new_heater) {
+			uint8_t data[2] = {0x30, sts3x.heater_on ? 0x6D : 0x66};
+			error = i2c_fifo_coop_write_direct(&sts3x.i2c_fifo, 2, data, true);
+
+			if(error == 0) {
+				sts3x.new_heater = false;
+			}
+		} else {
+			uint8_t data[3] = {0, 0, 0};
+			error = i2c_fifo_coop_read_register(&sts3x.i2c_fifo, 0xE000, 3, data);
+			if(error & XMC_I2C_CH_STATUS_FLAG_NACK_RECEIVED) {
+				// Don't count a NACK as a standard error
+				error = 0;
+
+				// A NACK is to be expected according to datasheet, if the STS3X is currently not ready.
+				// We wait for 50ms so the STS3X can finish the measurement.
+				// If the STS3X has some kind of error condition where it always NACKs, we will reset it after a while
+				sts3x.crc_error_count++;
+				coop_task_sleep_ms(50);
+
+				// We re-initialize the i2c_fifo here to make sure it isn't in any kind of error state because of the NACK.
+				i2c_fifo_init(&sts3x.i2c_fifo);
+			} else if(error == 0) {
+				uint8_t crc = crc8(data, 2);
+				if(crc == data[2]) {
+					sts3x.temperature     = -4500 + 17500*((data[0] << 8) | data[1])/(0xFFFF);
+					sts3x.crc_error_count = 0;
+
+					coop_task_sleep_ms(250);
+					continue;
+				} else {
+					sts3x.crc_error_count++;
+				}
+			}
+		}
+			
+		if((error != 0) || (sts3x.crc_error_count >= 100)) {
+			sts3x_init_i2c();
+			sts3x.crc_error_count = 0;
+		}
+
+		coop_task_yield();
+	}
+}
+
+
+void sts3x_init(void) {
+	memset(&sts3x, 0, sizeof(STS3X));
+	sts3x_init_i2c();
+	coop_task_init(&sts3x_task, sts3x_task_tick);
 }
 
 void sts3x_tick(void) {
-	I2CFifoState state = i2c_fifo_next_state(&sts3x.i2c_fifo);
-
-	if(state & I2C_FIFO_STATE_ERROR) {
-		if((state == I2C_FIFO_STATE_READ_DIRECT_ERROR) && (sts3x.i2c_fifo.i2c_status & XMC_I2C_CH_STATUS_FLAG_NACK_RECEIVED)) {
-			i2c_fifo_init(&sts3x.i2c_fifo);
-		} else {
-			loge("STS3X I2C error: %d\n\r", state);
-			sts3x_init();
-			return;
-		}
-	}
-
-    switch (state) {
-		case I2C_FIFO_STATE_READ_DIRECT_READY: {
-			uint8_t data[16];
-			uint8_t length = i2c_fifo_read_fifo(&sts3x.i2c_fifo, data, 16);
-
-			switch(sts3x.state) {
-				case STS3X_STATE_READ_DATA: {
-					if(length != 3) {
-						loge("STS3X unexpected I2C read length: %d\n\r", length);
-						sts3x_init();
-						return;
-					}
-
-					uint8_t crc = crc8(data, 2);
-					if(crc == data[2]) {
-						sts3x.temperature = -4500 + 17500*((data[0] << 8) | data[1])/(0xFFFF);
-					}
-					sts3x.state = STS3X_STATE_IDLE; 
-					break;
-				}
-
-				default: sts3x.state = STS3X_STATE_IDLE; break;
-			}
-            break;
-        }
-
-        case I2C_FIFO_STATE_WRITE_DIRECT_READY: {
-			switch(sts3x.state) {
-				case STS3X_STATE_NEW_PERIODIC_MODE: sts3x.state = STS3X_STATE_IDLE; sts3x.new_periodic_mode = false; break;
-				case STS3X_STATE_NEW_HEATER:        sts3x.state = STS3X_STATE_IDLE; sts3x.new_heater = false; break;
-				default:                            sts3x.state = STS3X_STATE_IDLE; break;
-			}
-            break;
-        }
-
-        case I2C_FIFO_STATE_IDLE: {
-			break; // Handled below
-		}
-
-		default: {
-			// If we end up in a ready state that we don't handle, something went wrong
-			if (state & I2C_FIFO_STATE_READY) {
-				loge("STS3X unrecognized I2C ready state: %d\n\r", state);
-				sts3x_init();
-			}
-
-			return;
-		}
-	}
-
-    if((state == I2C_FIFO_STATE_IDLE || (state & I2C_FIFO_STATE_READY) != 0) || (state == I2C_FIFO_STATE_READ_DIRECT_ERROR)) {
-        if(sts3x.new_periodic_mode) {
-			// uint8_t data[2] = {0x27, 0x37}; / 10 samples per second
-			// We use 4 SPS, since with 10 SPS there might be "self-heating" of the sensor (see datasheet Table 8)
-			uint8_t data[2] = {0x23, 0x34}; // 4 samples per second
-            i2c_fifo_write_direct(&sts3x.i2c_fifo, 2, data, true);
-
-			sts3x.state = STS3X_STATE_NEW_PERIODIC_MODE;
-        } else if(sts3x.new_heater) {
-			uint8_t data[2] = {0x30, sts3x.heater_on ? 0x6D : 0x66};
-            i2c_fifo_write_direct(&sts3x.i2c_fifo, 2, data, true);
-
-			sts3x.state = STS3X_STATE_NEW_HEATER;
-        } else {
-			if(system_timer_is_time_elapsed_ms(sts3x.last_read_time, 250)) {
-				uint8_t data[2] = {0xE0, 0x00};
-				i2c_fifo_write_direct(&sts3x.i2c_fifo, 2, data, false);
-				i2c_fifo_read_direct(&sts3x.i2c_fifo, 3, true);
-
-				sts3x.state = STS3X_STATE_READ_DATA;
-				sts3x.last_read_time = system_timer_get_ms();
-			}
-		}
-    }
+	coop_task_tick(&sts3x_task);
 }
 
 int16_t sts3x_get_temperature(void) {

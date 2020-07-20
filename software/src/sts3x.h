@@ -25,6 +25,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "bricklib2/os/coop_task.h"
 #include "bricklib2/hal/i2c_fifo/i2c_fifo.h"
 
 typedef enum {
@@ -39,11 +40,10 @@ typedef struct {
     bool new_heater;
     bool new_periodic_mode;
 
-    uint32_t last_read_time;
+    uint32_t crc_error_count;
+
     I2CFifo i2c_fifo;
     
-    STS3XState state;
-
     int16_t temperature;
 } STS3X;
 
