@@ -19,16 +19,14 @@ void example_setup(TF_HalContext *hal) {
 	// Create device object
 	check(tf_temperature_v2_create(&t, UID, hal), "create device object");
 
-
 	// Register temperature callback to function temperature_handler
 	tf_temperature_v2_register_temperature_callback(&t,
-	                                               temperature_handler,
-	                                               NULL);
+	                                                temperature_handler,
+	                                                NULL);
 
 	// Configure threshold for temperature "greater than 30 °C"
 	// with a debounce period of 1s (1000ms)
 	tf_temperature_v2_set_temperature_callback_configuration(&t, 1000, false, '>', 30*100, 0);
-
 }
 
 void example_loop(TF_HalContext *hal) {
